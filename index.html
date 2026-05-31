@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="リトミック・ピアノなど、お教室の先生向け。体験レッスンから入会率を上げる20項目チェック。スマホで3分、無料診断。">
+<title>満席教室診断｜お教室先生のための体験→入会率チェック20</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --pink: #e8507a;
+  --pink-light: #fdf0f4;
+  --pink-mid: #f7c0d0;
+  --pink-dark: #c0345a;
+  --green: #3a9e75;
+  --green-light: #eaf7f1;
+  --text: #1a1a1a;
+  --text-sub: #666;
+  --bg: #fff;
+  --bg2: #f9f7f8;
+  --border: rgba(0,0,0,0.1);
+  --radius: 12px;
+}
+body { font-family: 'Noto Sans JP', sans-serif; background: #fafafa; color: var(--text); }
+
+/* ADMIN TOGGLE */
+#admin-toggle-btn {
+  position: fixed; bottom: 20px; right: 20px; z-index: 999;
+  background: var(--pink); color: white; border: none;
+  border-radius: 50px; padding: 10px 18px; font-size: 13px;
+  cursor: pointer; font-family: inherit; font-weight: 500;
+  display: flex; align-items: center; gap: 6px;
+  box-shadow: 0 2px 12px rgba(232,80,122,0.3);
+}
+#admin-toggle-btn:hover { background: var(--pink-dark); }
+
+/* ADMIN PANEL */
+#admin-panel {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 1000; background: rgba(0,0,0,0.5);
+  align-items: center; justify-content: center; padding: 20px;
+}
+#admin-panel.open { display: flex; }
+.admin-inner {
+  background: var(--bg); border-radius: var(--radius);
+  width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto;
+  border: 1px solid var(--border);
+}
+.admin-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 20px; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--bg); z-index: 1;
+}
+.admin-header h2 { font-size: 16px; font-weight: 500; }
+.admin-close { background: none; border: none; cursor: pointer; color: var(--text-sub); font-size: 22px; padding: 4px; line-height: 1; }
+.admin-body { padding: 20px; }
+.admin-section { margin-bottom: 24px; }
+.admin-section-title {
+  font-size: 11px; font-weight: 700; color: var(--text-sub);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
+}
+.admin-field { margin-bottom: 14px; }
+.admin-field label { display: block; font-size: 13px; color: var(--text-sub); margin-bottom: 5px; }
+.admin-field input, .admin-field textarea {
+  width: 100%; font-family: inherit; font-size: 14px;
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 8px 10px; background: var(--bg); color: var(--text);
+  outline: none;
+}
+.admin-field input:focus, .admin-field textarea:focus { border-color: var(--pink); }
+.admin-field textarea { height: 72px; resize: vertical; }
+.admin-actions { display: flex; gap: 10px; padding-top: 8px; border-top: 1px solid var(--border); margin-top: 4px; }
+.btn-save { flex: 1; background: var(--pink); color: white; border: none; border-radius: 8px; padding: 11px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; }
+.btn-save:hover { background: var(--pink-dark); }
+.btn-cancel { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 11px 16px; font-size: 14px; cursor: pointer; font-family: inherit; color: var(--text-sub); }
+.btn-cancel:hover { background: var(--bg2); }
+.save-notice { display: none; background: var(--green-light); color: var(--green); font-size: 13px; padding: 8px 12px; border-radius: 8px; margin-bottom: 14px; text-align: center; }
+.save-notice.show { display: block; }
+
+/* SITE */
+.site-wrap { max-width: 640px; margin: 0 auto; padding: 0 16px 80px; }
+
+.hero { text-align: center; padding: 40px 0 28px; }
+.hero-badge {
+  display: inline-block; background: var(--pink-light); color: var(--pink);
+  font-size: 12px; font-weight: 500; padding: 4px 14px; border-radius: 50px;
+  margin-bottom: 16px; border: 1px solid var(--pink-mid);
+}
+.hero h1 { font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 30px; font-weight: 700; line-height: 1.4; margin-bottom: 10px; }
+.hero h1 span { color: var(--pink); }
+.hero-sub { font-size: 14px; color: var(--text-sub); }
+
+.profile-card {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--bg2); border-radius: var(--radius);
+  border: 1px solid var(--border); padding: 14px 16px; margin: 20px 0;
+}
+.profile-avatar {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--pink-light); border: 2px solid var(--pink-mid);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.profile-name { font-size: 14px; font-weight: 500; }
+.profile-role { font-size: 12px; color: var(--text-sub); }
+
+.target-card {
+  background: var(--pink-light); border: 1px solid var(--pink-mid);
+  border-radius: var(--radius); padding: 16px 18px; margin: 20px 0;
+}
+.target-card h3 { font-size: 13px; color: var(--pink-dark); margin-bottom: 10px; }
+.target-list { list-style: none; }
+.target-list li { font-size: 14px; padding: 3px 0; display: flex; align-items: flex-start; gap: 8px; }
+.target-list li::before { content: '✓'; color: var(--pink); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+.progress-bar-wrap { margin: 24px 0 16px; }
+.progress-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-sub); margin-bottom: 6px; }
+.progress-track { height: 6px; background: var(--bg2); border-radius: 3px; border: 1px solid var(--border); overflow: hidden; }
+.progress-fill { height: 100%; background: var(--pink); border-radius: 3px; transition: width 0.3s ease; }
+
+.section-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 14px; }
+.section-num { width: 26px; height: 26px; border-radius: 50%; background: var(--pink); color: white; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; margin-right: 8px; flex-shrink: 0; }
+.section-header { display: flex; align-items: center; margin-bottom: 14px; font-size: 14px; font-weight: 500; }
+.section-tag { display: inline-block; background: var(--pink-light); color: var(--pink-dark); font-size: 11px; padding: 2px 8px; border-radius: 4px; margin-left: auto; }
+.check-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+.check-item:last-child { border-bottom: none; }
+.check-box { width: 20px; height: 20px; border-radius: 5px; border: 2px solid var(--pink-mid); background: var(--bg); flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 2px; transition: all 0.15s; }
+.check-item.checked .check-box { background: var(--pink); border-color: var(--pink); color: white; }
+.check-item.checked .check-box::after { content: '✓'; font-size: 12px; font-weight: 700; }
+.check-item.checked .check-text { color: var(--text-sub); }
+.check-text { font-size: 14px; line-height: 1.6; }
+.check-text strong { color: var(--pink); }
+
+.show-result-btn { width: 100%; background: var(--pink); color: white; border: none; border-radius: var(--radius); padding: 16px; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; margin: 24px 0; }
+.show-result-btn:hover { background: var(--pink-dark); }
+
+.result-section { display: none; }
+.result-section.show { display: block; }
+
+.result-header { background: var(--pink-light); border: 1px solid var(--pink-mid); border-radius: var(--radius); padding: 24px 20px; text-align: center; margin-bottom: 20px; }
+.result-score-big { font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 56px; font-weight: 700; color: var(--pink); line-height: 1; }
+.result-score-sub { font-size: 14px; color: var(--text-sub); margin-top: 4px; }
+.result-level { display: inline-block; background: var(--pink); color: white; border-radius: 50px; padding: 6px 20px; font-size: 14px; font-weight: 500; margin-top: 12px; }
+
+.cat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.cat-label { font-size: 12px; color: var(--text-sub); width: 130px; flex-shrink: 0; }
+.cat-track { flex: 1; height: 8px; background: var(--bg2); border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+.cat-fill { height: 100%; background: var(--pink); border-radius: 4px; }
+.cat-score { font-size: 12px; color: var(--text-sub); width: 32px; text-align: right; }
+
+.advice-card { background: var(--bg2); border-radius: var(--radius); border: 1px solid var(--border); padding: 16px 18px; margin: 20px 0; }
+.advice-title { font-size: 13px; font-weight: 500; margin-bottom: 8px; color: var(--text-sub); }
+.advice-text { font-size: 14px; line-height: 1.8; }
+
+.cta-section { background: var(--pink-light); border: 1px solid var(--pink-mid); border-radius: var(--radius); padding: 28px 20px; margin: 24px 0; text-align: center; }
+.cta-badge { display: inline-block; background: var(--pink); color: white; font-size: 11px; font-weight: 500; padding: 3px 12px; border-radius: 50px; margin-bottom: 14px; }
+.cta-title { font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 10px; line-height: 1.55; color: var(--text); }
+.cta-title em { color: var(--pink); font-style: normal; }
+.cta-desc { font-size: 13px; color: var(--text-sub); margin-bottom: 20px; line-height: 1.8; }
+.cta-img { width: 100%; max-width: 320px; border-radius: 8px; margin-bottom: 16px; }
+.cta-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #06c755; color: white; border-radius: 50px;
+  padding: 15px 32px; font-size: 15px; font-weight: 700;
+  font-family: inherit; text-decoration: none; border: none; cursor: pointer; margin-bottom: 10px;
+}
+.cta-btn:hover { background: #05a847; }
+.cta-hint { font-size: 12px; color: var(--text-sub); }
+
+.retry-btn { width: 100%; background: none; border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; font-size: 14px; color: var(--text-sub); cursor: pointer; font-family: inherit; margin-top: 8px; }
+.retry-btn:hover { background: var(--bg2); }
+
+.footer { text-align: center; padding: 24px 0 8px; font-size: 12px; color: var(--text-sub); }
+
+@media (max-width: 480px) {
+  .hero h1 { font-size: 24px; }
+  .cta-title { font-size: 17px; }
+  .cta-btn { padding: 13px 20px; font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="site-wrap">
+  <div class="hero">
+    <div class="hero-badge">お教室の先生向け・無料診断</div>
+    <h1>体験から入会率<br><span>アップ</span>診断</h1>
+    <p class="hero-sub">3分でわかる！教室の強み＆伸びしろ｜20項目チェック</p>
+  </div>
+
+  <div class="profile-card">
+    <div class="profile-avatar">🌸</div>
+    <div>
+      <div class="profile-role">親子教室 運営サポーター</div>
+      <div class="profile-name">小関すみよ</div>
+    </div>
+  </div>
+
+  <div class="target-card">
+    <h3>こんな先生におすすめ</h3>
+    <ul class="target-list">
+      <li>体験レッスン後、入会につながらない</li>
+      <li>リトミック・ベビーマッサージ・親子教室の先生</li>
+      <li>満席教室を目指してる</li>
+      <li>改善ポイントを知りたい</li>
+    </ul>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-label"><span>診断進捗</span><span id="progress-text">0 / 20 項目</span></div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <div id="checklist-area"></div>
+
+  <button class="show-result-btn" onclick="showResult()">診断結果を見る</button>
+
+  <div class="result-section" id="result-section">
+    <div class="result-header">
+      <div style="font-size:13px;color:var(--text-sub);margin-bottom:4px;">あなたの診断結果</div>
+      <div style="font-size:14px;font-weight:500;margin-bottom:8px;">満席教室への伸びしろは…</div>
+      <div class="result-score-big" id="result-score">0</div>
+      <div class="result-score-sub">/ 20 できている項目</div>
+      <div class="result-level" id="result-level">レベル</div>
+    </div>
+
+    <div class="section-card">
+      <div style="font-size:14px;font-weight:500;margin-bottom:14px;">カテゴリ別バランス</div>
+      <div id="cat-bars"></div>
+    </div>
+
+    <div class="advice-card">
+      <div class="advice-title">小関すみよ より</div>
+      <div class="advice-text" id="advice-text"></div>
+    </div>
+
+    <div class="cta-section">
+      <div class="cta-badge" id="cta-badge">公式LINE 無料プレゼント</div>
+      <div class="cta-title" id="cta-title">詳細は<em>公式LINE登録の<br>プレゼント</em>で解説しています！！</div>
+      <div class="cta-desc" id="cta-desc">診断結果をもとに、さらに具体的なノウハウをお届けします。ぜひ公式LINEに登録して受け取ってください。</div>
+      <div id="cta-img-wrap"></div>
+      <a class="cta-btn" id="cta-btn" href="https://lin.ee/OEU2Y7qg" target="_blank" rel="noopener">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M19.952 12.428c0-4.476-4.487-8.115-10.002-8.115C4.435 4.313 0 7.952 0 12.428c0 4.014 3.561 7.38 8.373 8.016.326.07.77.215.882.494.101.253.066.649.033.904l-.143.858c-.044.253-.201.989.866.539 1.067-.45 5.754-3.389 7.849-5.806 1.447-1.59 2.092-3.201 2.092-5.005z"/></svg>
+        <span id="cta-btn-text">公式LINEに登録してプレゼントを受け取る</span>
+      </a>
+      <div class="cta-hint" id="cta-hint">↑ 登録無料・すぐに受け取れます</div>
+    </div>
+
+    <button class="retry-btn" onclick="resetDiagnosis()">もう一度診断する</button>
+  </div>
+
+  <div class="footer">満席教室診断 | 体験 → 入会率アップ20項目チェック</div>
+</div>
+
+<!-- 管理画面ボタン -->
+<button id="admin-toggle-btn" onclick="toggleAdmin()">⚙ 管理画面</button>
+
+<div id="admin-panel">
+  <div class="admin-inner">
+    <div class="admin-header">
+      <h2>⚙ CTA管理画面</h2>
+      <button class="admin-close" onclick="toggleAdmin()">×</button>
+    </div>
+    <div class="admin-body">
+      <div class="save-notice" id="save-notice">✓ 保存しました！</div>
+      <div class="admin-section">
+        <div class="admin-section-title">バッジ・タイトル</div>
+        <div class="admin-field"><label>バッジテキスト</label><input type="text" id="a-badge" value="公式LINE 無料プレゼント"></div>
+        <div class="admin-field"><label>CTAタイトル</label><textarea id="a-title">詳細は公式LINE登録のプレゼントで解説しています！！</textarea></div>
+        <div class="admin-field"><label>説明文</label><textarea id="a-desc">診断結果をもとに、さらに具体的なノウハウをお届けします。ぜひ公式LINEに登録して受け取ってください。</textarea></div>
+      </div>
+      <div class="admin-section">
+        <div class="admin-section-title">画像（任意）</div>
+        <div class="admin-field"><label>画像URL（空欄で非表示）</label><input type="text" id="a-img" placeholder="https://example.com/image.png"></div>
+      </div>
+      <div class="admin-section">
+        <div class="admin-section-title">LINEボタン</div>
+        <div class="admin-field"><label>LINEリンクURL</label><input type="text" id="a-lineurl" value="https://lin.ee/OEU2Y7qg"></div>
+        <div class="admin-field"><label>ボタンテキスト</label><input type="text" id="a-btntext" value="公式LINEに登録してプレゼントを受け取る"></div>
+        <div class="admin-field"><label>ボタン下ヒントテキスト</label><input type="text" id="a-hint" value="↑ 登録無料・すぐに受け取れます"></div>
+      </div>
+      <div class="admin-actions">
+        <button class="btn-cancel" onclick="toggleAdmin()">キャンセル</button>
+        <button class="btn-save" onclick="saveAdmin()">保存する</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SECTIONS = [
+  { num:1, title:"スピード対応", sub:"返信の早さ・タイミング", tag:"4項目", items:[
+    "体験お申込みから<strong>6時間以内</strong>に最初のご連絡をしている",
+    "夜・休日でも、自動返信で「受付しました」を伝える仕組みがある",
+    "2回目以降の返信も、当日中（できれば数時間以内）に返している",
+    "返信が遅れる場合は、理由を添えて先にお詫びの一言を入れている"
+  ]},
+  { num:2, title:"パーソナライズ", sub:"その人だけの一言", tag:"4項目", items:[
+    "返信文の中で、お子さんの<strong>お名前を何度も</strong>呼んでいる",
+    "月齢・年齢に合わせた話題を入れている（例：「離乳食の頃ですね」など）",
+    "希望日や時間帯に合わせて、無理なく通えるご提案を入れている",
+    "テンプレ感のない、その人だけのメッセージを送っている"
+  ]},
+  { num:3, title:"ヒアリング力", sub:"本音を引き出す質問", tag:"5項目", items:[
+    "体験申込のきっかけ・期待していることを聞いている",
+    "お子さんの普段の様子（人見知り・走り回る・泣く等）を聞いている",
+    "お母さん自身の<strong>不安や悩み</strong>を引き出す質問をしている",
+    "他の習い事や教室経験を聞いている",
+    "普段の生活リズム（送り迎え・兄弟構成・お仕事）を聞いている"
+  ]},
+  { num:4, title:"期待値設計", sub:"未来を見せる伝え方", tag:"4項目", items:[
+    "体験レッスンで<strong>得られる内容と範囲</strong>を事前に伝えている",
+    "体験当日の流れ・注意事項・お願い事項を伝えている",
+    "教室への想い・自分のこと（子どもの話など）を話している",
+    "継続された場合の<strong>未来像</strong>を具体的に伝えている"
+  ]},
+  { num:5, title:"アフターフォロー", sub:"体験後の繋ぎ方", tag:"3項目", items:[
+    "体験当日の夜〜<strong>24時間以内</strong>にお礼連絡をしている",
+    "体験後の感想・お子さんの変化を聞く仕組みがある",
+    "迷っている方への次回提案（次の一手）を用意している"
+  ]}
+];
+
+const checks = {};
+
+function buildChecklist() {
+  const area = document.getElementById('checklist-area');
+  SECTIONS.forEach(sec => {
+    const card = document.createElement('div');
+    card.className = 'section-card';
+    card.innerHTML = `<div class="section-header"><span class="section-num">${sec.num}</span><div><span style="font-weight:500">${sec.title}</span><span style="font-size:12px;color:var(--text-sub);margin-left:6px">${sec.sub}</span></div><span class="section-tag">${sec.tag}</span></div>`;
+    sec.items.forEach((item, i) => {
+      const key = `${sec.num}-${i}`;
+      checks[key] = false;
+      const row = document.createElement('div');
+      row.className = 'check-item';
+      row.innerHTML = `<div class="check-box"></div><div class="check-text">${item}</div>`;
+      row.addEventListener('click', () => {
+        checks[key] = !checks[key];
+        row.classList.toggle('checked', checks[key]);
+        const total = Object.values(checks).filter(Boolean).length;
+        document.getElementById('progress-fill').style.width = Math.round(total / 20 * 100) + '%';
+        document.getElementById('progress-text').textContent = total + ' / 20 項目';
+      });
+      card.appendChild(row);
+    });
+    area.appendChild(card);
+  });
+}
+
+function showResult() {
+  const total = Object.values(checks).filter(Boolean).length;
+  document.getElementById('result-score').textContent = total;
+  let level, advice;
+  if (total <= 5) { level = '🌱 はじめの一歩レベル'; advice = '診断お疲れ様でした！まずはスピード対応とパーソナライズから取り組むと、体験後の入会率がぐっと変わります。小さな一歩から始めてみましょう。'; }
+  else if (total <= 10) { level = '🌷 基礎固めレベル'; advice = '基礎はできてきています！ヒアリング力と期待値設計を磨くと、体験当日の満足度がぐっと高まります。あともう少し！'; }
+  else if (total <= 15) { level = '🌸 成長中レベル'; advice = 'とても良い状態です！アフターフォローを仕組み化できると、迷っているお母さんたちの背中を押せるようになります。あと一歩で満席教室！'; }
+  else { level = '🌺 満席教室レベル'; advice = '素晴らしい！20項目のほとんどを実践できています。この仕組みを継続・改善しながら、口コミが広がる教室づくりを目指しましょう！'; }
+  document.getElementById('result-level').textContent = level;
+  document.getElementById('advice-text').textContent = advice;
+
+  const cats = [
+    { label:'①スピード対応', max:4, score:[0,1,2,3].filter(i=>checks[`1-${i}`]).length },
+    { label:'②パーソナライズ', max:4, score:[0,1,2,3].filter(i=>checks[`2-${i}`]).length },
+    { label:'③ヒアリング力', max:5, score:[0,1,2,3,4].filter(i=>checks[`3-${i}`]).length },
+    { label:'④期待値設計', max:4, score:[0,1,2,3].filter(i=>checks[`4-${i}`]).length },
+    { label:'⑤アフターフォロー', max:3, score:[0,1,2].filter(i=>checks[`5-${i}`]).length },
+  ];
+  document.getElementById('cat-bars').innerHTML = cats.map(c =>
+    `<div class="cat-row"><div class="cat-label">${c.label}</div><div class="cat-track"><div class="cat-fill" style="width:${Math.round(c.score/c.max*100)}%"></div></div><div class="cat-score">${c.score}/${c.max}</div></div>`
+  ).join('');
+
+  document.getElementById('result-section').classList.add('show');
+  setTimeout(() => document.getElementById('result-section').scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+}
+
+function resetDiagnosis() {
+  Object.keys(checks).forEach(k => checks[k] = false);
+  document.querySelectorAll('.check-item').forEach(el => el.classList.remove('checked'));
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('progress-text').textContent = '0 / 20 項目';
+  document.getElementById('result-section').classList.remove('show');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function toggleAdmin() {
+  const panel = document.getElementById('admin-panel');
+  panel.classList.toggle('open');
+  if (panel.classList.contains('open')) {
+    document.getElementById('a-badge').value = document.getElementById('cta-badge').textContent;
+    document.getElementById('a-title').value = document.getElementById('cta-title').innerText;
+    document.getElementById('a-desc').value = document.getElementById('cta-desc').textContent;
+    document.getElementById('a-lineurl').value = document.getElementById('cta-btn').href;
+    document.getElementById('a-btntext').value = document.getElementById('cta-btn-text').textContent;
+    document.getElementById('a-hint').value = document.getElementById('cta-hint').textContent;
+  }
+}
+
+function saveAdmin() {
+  document.getElementById('cta-badge').textContent = document.getElementById('a-badge').value;
+  document.getElementById('cta-title').textContent = document.getElementById('a-title').value;
+  document.getElementById('cta-desc').textContent = document.getElementById('a-desc').value;
+  document.getElementById('cta-btn').href = document.getElementById('a-lineurl').value;
+  document.getElementById('cta-btn-text').textContent = document.getElementById('a-btntext').value;
+  document.getElementById('cta-hint').textContent = document.getElementById('a-hint').value;
+  const imgUrl = document.getElementById('a-img').value.trim();
+  document.getElementById('cta-img-wrap').innerHTML = imgUrl ? `<img src="${imgUrl}" class="cta-img" alt="画像">` : '';
+  const n = document.getElementById('save-notice');
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 2500);
+}
+
+buildChecklist();
+</script>
+</body>
+</html>
